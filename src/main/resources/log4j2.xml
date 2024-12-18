@@ -1,0 +1,56 @@
+<!--
+    Configuration file for Log4j2 logging framework.
+
+
+    This configuration sets up two appenders: Console and RollingFile.
+
+    Appenders:
+    1. Console:
+        - Outputs log messages to the console.
+        - Uses a pattern layout to format log messages with timestamp, thread, log level, logger name, and message.
+
+    2. RollingFile:
+        - Outputs log messages to a rolling file named "app.log".
+        - Uses a pattern layout similar to the Console appender.
+        - Rolls over the log file daily and when the file size exceeds 10MB.
+        - Includes a time-based triggering policy (rolls over daily) and a size-based triggering policy (rolls over when the file size exceeds 10MB).
+        - Filters log messages to include only those with level INFO or higher.
+
+    Loggers:
+    1. Logger for "com.coffecode.App":
+        - Logs messages at DEBUG level.
+        - Uses both Console and RollingFile appenders.
+        - Does not inherit appenders from the root logger (additivity is false).
+
+    2. Root Logger:
+        - Logs messages at INFO level.
+        - Uses both Console and RollingFile appenders.
+-->
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Appenders>
+        <Console name="Console">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </Console>
+        <RollingFile name="App" fileName="logs/app.log" filePattern="logs/app-%d{yyyy-MM-dd}.log">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="10MB"/>
+            </Policies>
+            <Filters>
+                <ThresholdFilter level="INFO"/>
+            </Filters>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <Logger name="com.coffecode.App" level="debug" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="App"/>
+        </Logger>
+        <Root level="info">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="App"/>
+        </Root>
+    </Loggers>
+</Configuration>
