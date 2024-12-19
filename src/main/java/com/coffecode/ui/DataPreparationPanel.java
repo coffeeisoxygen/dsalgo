@@ -12,7 +12,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.border.TitledBorder;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 import com.coffecode.controllers.ItemsController;
@@ -27,6 +30,7 @@ public class DataPreparationPanel<T extends Comparable<T>> extends JPanel {
     private JButton generateButton;
     private JButton resetButton;
     private JTable dataTable;
+    private JTextField infoSizeBox;
     private ItemsController<T> controller;
     private DataPreparationHandler<T> handler;
 
@@ -52,8 +56,17 @@ public class DataPreparationPanel<T extends Comparable<T>> extends JPanel {
         generateButton = new JButton("Generate");
         resetButton = new JButton("Reset");
 
+        JLabel infoSizeLabel = new JLabel("Size:");
+        infoSizeBox = new JTextField(10);
+        infoSizeBox.setEditable(false);
+
         dataTable = new JTable(new DefaultTableModel(new Object[] { "Index", "Value" }, 0));
         JScrollPane scrollPane = new JScrollPane(dataTable);
+
+        // Center align table data
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+        dataTable.setDefaultRenderer(Object.class, centerRenderer);
 
         // Add components to panel
         add(dataTypeLabel, gbc);
@@ -76,6 +89,14 @@ public class DataPreparationPanel<T extends Comparable<T>> extends JPanel {
         gbc.gridx = 1;
         gbc.weightx = 1.0;
         add(resetButton, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.weightx = 0;
+        add(infoSizeLabel, gbc);
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;
+        add(infoSizeBox, gbc);
 
         gbc.gridx = 0;
         gbc.gridy++;
@@ -132,5 +153,8 @@ public class DataPreparationPanel<T extends Comparable<T>> extends JPanel {
         for (T item : controller.getItemList()) {
             model.addRow(new Object[] { index++, item.toString() });
         }
+
+        // Update size info
+        infoSizeBox.setText(String.valueOf(controller.getItemSize()));
     }
 }

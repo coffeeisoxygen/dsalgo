@@ -55,6 +55,8 @@ public class DataPreparationHandler<T extends Comparable<T>> {
         }
     }
 
+
+
     private String getInputMessage(DataType dataType) {
         if (dataType == DataType.STRING) {
             return "Masukkan kata yang diinginkan, pisahkan dengan koma (,)";

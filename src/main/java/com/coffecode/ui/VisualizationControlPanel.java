@@ -25,7 +25,7 @@ public class VisualizationControlPanel extends JPanel {
         controlPanel = new JPanel(new GridBagLayout());
         visualizationPanel = new VisualizationPanel();
 
-        // Create control buttons with icons
+        // Create control buttons with icons from FlatLaf
         JButton startButton = new JButton(UIManager.getIcon("FileView.fileIcon"));
         JButton pauseButton = new JButton(UIManager.getIcon("FileView.directoryIcon"));
         JButton stopButton = new JButton(UIManager.getIcon("FileView.computerIcon"));
@@ -59,5 +59,9 @@ public class VisualizationControlPanel extends JPanel {
         // Add panels to main panel
         add(controlPanel, BorderLayout.NORTH);
         add(visualizationPanel, BorderLayout.CENTER);
+    }
+
+    public VisualizationPanel getVisualizationPanel() {
+        return visualizationPanel;
     }
 }
