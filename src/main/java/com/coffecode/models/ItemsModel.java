@@ -13,19 +13,25 @@ public class ItemsModel<T extends Comparable<T>> {
     private int itemSize;
     private SortStrategy<T> sortStrategy;
     private boolean isSorted;
+    private SortAlgorithmType currentSortAlgorithm;
 
     public ItemsModel() {
         this.itemList = new ArrayList<>();
         this.itemSize = 0;
         this.sortStrategy = null;
         this.isSorted = false;
+        this.currentSortAlgorithm = null;
     }
 
     // Method to add items to the list
     public void addItem(T item) {
-        this.itemList.add(item);
-        this.itemSize = this.itemList.size();
-        this.isSorted = false; // Reset isSorted flag when a new item is added
+        if (validateItem(item)) {
+            this.itemList.add(item);
+            this.itemSize = this.itemList.size();
+            this.isSorted = false; // Reset isSorted flag when a new item is added
+        } else {
+            throw new IllegalArgumentException("Invalid item: " + item);
+        }
     }
 
     // Method to reset the list
@@ -38,6 +44,7 @@ public class ItemsModel<T extends Comparable<T>> {
     // Method to set the sorting strategy
     public void setSortStrategy(SortAlgorithmType type) {
         this.sortStrategy = SortFactory.getSortStrategy(type);
+        this.currentSortAlgorithm = type;
     }
 
     // Method to sort the list using the current strategy
@@ -61,5 +68,16 @@ public class ItemsModel<T extends Comparable<T>> {
     // Getter for itemSize
     public int getItemSize() {
         return this.itemSize;
+    }
+
+    // Getter for currentSortAlgorithm
+    public SortAlgorithmType getCurrentSortAlgorithm() {
+        return this.currentSortAlgorithm;
+    }
+
+    // Validator for items
+    private boolean validateItem(T item) {
+        // Add validation logic here if needed
+        return item != null;
     }
 }
