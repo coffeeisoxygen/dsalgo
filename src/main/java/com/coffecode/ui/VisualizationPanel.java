@@ -9,10 +9,10 @@ import javax.swing.JPanel;
 
 public class VisualizationPanel<T extends Comparable<T>> extends JPanel {
 
-    private transient List<T> data;
+    private List<T> data;
 
     public VisualizationPanel() {
-        setPreferredSize(new Dimension(800, 400));
+        setPreferredSize(new Dimension(800, 350));
     }
 
     public void setData(List<T> data) {
@@ -32,29 +32,16 @@ public class VisualizationPanel<T extends Comparable<T>> extends JPanel {
             int width = getWidth();
             int height = getHeight();
             int barWidth = width / data.size();
+            int maxValue = data.stream().mapToInt(value -> ((Integer) value)).max().orElse(1);
 
-            if (data.get(0) instanceof Integer) {
-                Integer maxValue = (Integer) data.stream().max(T::compareTo).orElse(null);
-
-                for (int i = 0; i < data.size(); i++) {
-                    Integer value = (Integer) data.get(i);
-                    int barHeight = (int) ((double) value / maxValue * height);
-                    g.setColor(Color.BLUE);
-                    g.fillRect(i * barWidth, height - barHeight, barWidth, barHeight);
-                    g.setColor(Color.BLACK);
-                    g.drawRect(i * barWidth, height - barHeight, barWidth, barHeight);
-                }
-            } else if (data.get(0) instanceof String) {
-                int maxValue = data.stream().mapToInt(value -> ((String) value).length()).max().orElse(1);
-
-                for (int i = 0; i < data.size(); i++) {
-                    String value = (String) data.get(i);
-                    int barHeight = (int) ((double) value.length() / maxValue * height);
-                    g.setColor(Color.BLUE);
-                    g.fillRect(i * barWidth, height - barHeight, barWidth, barHeight);
-                    g.setColor(Color.BLACK);
-                    g.drawRect(i * barWidth, height - barHeight, barWidth, barHeight);
-                }
+            for (int i = 0; i < data.size(); i++) {
+                int value = (Integer) data.get(i);
+                int barHeight = (int) ((double) value / maxValue * height);
+                g.setColor(Color.BLUE);
+                g.fillRect(i * barWidth, height - barHeight, barWidth, barHeight);
+                g.setColor(Color.BLACK);
+                g.drawRect(i * barWidth, height - barHeight, barWidth, barHeight);
+                g.drawString(String.valueOf(value), i * barWidth + barWidth / 2, height - barHeight - 5); // Draw value
             }
         }
     }

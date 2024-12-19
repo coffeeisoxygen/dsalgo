@@ -15,6 +15,7 @@ import javax.swing.border.TitledBorder;
 
 import com.coffecode.context.AppContext;
 import com.coffecode.controllers.ItemsController;
+import com.coffecode.handlers.AnimationController;
 import com.coffecode.handlers.AnimationHandler;
 import com.coffecode.handlers.SortingHandler;
 
@@ -24,6 +25,7 @@ public class VisualizationControlPanel<T extends Comparable<T>> extends JPanel {
     private VisualizationPanel<T> visualizationPanel;
     private SortingHandler<T> sortingHandler;
     private AnimationHandler<T> animationHandler;
+    private AnimationController animationController;
 
     public VisualizationControlPanel(AppContext<T> context) {
         ItemsController<T> controller = context.getItemsController();
@@ -39,18 +41,15 @@ public class VisualizationControlPanel<T extends Comparable<T>> extends JPanel {
         controller.getModel().addDataChangeListener((List<T> data) -> visualizationPanel.updateData(data));
 
         // Create control buttons with icons from FlatLaf
-        JButton startButton = new JButton("Start");
-        startButton.setBackground(java.awt.Color.GREEN);
-        JButton pauseButton = new JButton("Pause");
-        pauseButton.setBackground(java.awt.Color.YELLOW);
+        JButton startPauseButton = new JButton("Start");
+        startPauseButton.setBackground(java.awt.Color.GREEN);
         JButton stopButton = new JButton("Stop");
         stopButton.setBackground(java.awt.Color.RED);
         JButton resetButton = new JButton("Reset");
         resetButton.setBackground(java.awt.Color.ORANGE);
-        JButton nextButton = new JButton("Next");
-        nextButton.setBackground(java.awt.Color.CYAN);
-        JButton prevButton = new JButton("Prev");
-        prevButton.setBackground(java.awt.Color.CYAN);
+
+        // Initialize AnimationController
+        animationController = new AnimationController(startPauseButton, stopButton, resetButton, speedSpinner);
 
         // Add buttons and spinner to control panel
         GridBagConstraints gbc = new GridBagConstraints();
@@ -58,17 +57,11 @@ public class VisualizationControlPanel<T extends Comparable<T>> extends JPanel {
         gbc.gridx = 0;
         gbc.gridy = 0;
 
-        controlPanel.add(startButton, gbc);
-        gbc.gridx++;
-        controlPanel.add(pauseButton, gbc);
+        controlPanel.add(startPauseButton, gbc);
         gbc.gridx++;
         controlPanel.add(stopButton, gbc);
         gbc.gridx++;
         controlPanel.add(resetButton, gbc);
-        gbc.gridx++;
-        controlPanel.add(nextButton, gbc);
-        gbc.gridx++;
-        controlPanel.add(prevButton, gbc);
         gbc.gridx++;
         controlPanel.add(speedSpinner, gbc);
 
@@ -76,50 +69,51 @@ public class VisualizationControlPanel<T extends Comparable<T>> extends JPanel {
         add(controlPanel, BorderLayout.NORTH);
         add(visualizationPanel, BorderLayout.CENTER);
 
-        // Add action listener to start button
-        startButton.addActionListener(e -> {
-            if (controller.getItemSize() == 0) {
-                JOptionPane.showMessageDialog(this, "No items to sort. Please add items first.", "Error",
-                        JOptionPane.ERROR_MESSAGE);
-                return;
+        // Add action listener to start/pause button
+        startPauseButton.addActionListener(e -> {
+            if (!animationController.isRunning()) {
+                if (controller.getItemSize() == 0) {
+                    JOptionPane.showMessageDialog(this, "No items to sort. Please add items first.", "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                if (controller.getCurrentSortAlgorithm() == null) {
+                    JOptionPane.showMessageDialog(this,
+                            "Sort algorithm is not set. Please set the sort algorithm first.", "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                int delay = (int) speedSpinner.getValue();
+                animationHandler = new AnimationHandler<>(delay, data -> {
+                    controller.getModel().notifyListeners();
+                });
+                sortingHandler = new SortingHandler<>(controller, animationHandler);
+                sortingHandler.startSorting();
+                animationController.start();
+            } else if (animationController.isPaused()) {
+                animationController.resume();
+                sortingHandler.resumeSorting();
+            } else {
+                animationController.pause();
+                sortingHandler.pauseSorting();
             }
-            if (controller.getCurrentSortAlgorithm() == null) {
-                JOptionPane.showMessageDialog(this, "Sort algorithm is not set. Please set the sort algorithm first.",
-                        "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            int delay = (int) speedSpinner.getValue();
-            animationHandler = new AnimationHandler<>(delay, data -> {
-                controller.getModel().notifyListeners();
-            });
-            sortingHandler = new SortingHandler<>(controller, animationHandler);
-            sortingHandler.startSorting();
-        });
-
-        // Add action listener to reset button
-        resetButton.addActionListener(e -> {
-            controller.resetItems();
-        });
-
-        // Add action listener to pause button
-        pauseButton.addActionListener(e -> {
-            // Implement pause functionality
         });
 
         // Add action listener to stop button
         stopButton.addActionListener(e -> {
-            // Implement stop functionality
+            sortingHandler.stopSorting();
+            animationController.stop();
         });
 
-        // Add action listener to next button
-        nextButton.addActionListener(e -> {
-            // Implement next step functionality
+        // Add action listener to reset button
+        resetButton.addActionListener(e -> {
+            if (!animationController.isRunning()) {
+                controller.resetItems();
+            }
         });
 
-        // Add action listener to prev button
-        prevButton.addActionListener(e -> {
-            // Implement previous step functionality
-        });
+        // Disable stop button initially
+        stopButton.setEnabled(false);
     }
 
     public VisualizationPanel<T> getVisualizationPanel() {
