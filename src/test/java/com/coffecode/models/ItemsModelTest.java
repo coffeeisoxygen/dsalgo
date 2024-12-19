@@ -13,7 +13,7 @@ public class ItemsModelTest {
 
     @Test
     public void testBubbleSort() {
-        ItemsModel model = new ItemsModel();
+        IItemsModel model = new ItemsModel();
         model.addItem("banana");
         model.addItem("apple");
         model.addItem("cherry");
@@ -28,7 +28,7 @@ public class ItemsModelTest {
 
     @Test
     public void testQuickSort() {
-        ItemsModel model = new ItemsModel();
+        IItemsModel model = new ItemsModel();
         model.addItem("banana");
         model.addItem("apple");
         model.addItem("cherry");
@@ -43,7 +43,7 @@ public class ItemsModelTest {
 
     @Test
     public void testMergeSort() {
-        ItemsModel model = new ItemsModel();
+        IItemsModel model = new ItemsModel();
         model.addItem("banana");
         model.addItem("apple");
         model.addItem("cherry");
