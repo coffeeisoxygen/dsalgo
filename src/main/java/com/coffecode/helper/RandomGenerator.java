@@ -12,7 +12,7 @@ public class RandomGenerator {
     private static final java.util.Random RANDOM = new java.util.Random();
 
     public static String generateRandomString(int length) {
-        String alphaNumericString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        String alphaNumericString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         StringBuilder builder = new StringBuilder();
         while (length-- != 0) {
             int character = RANDOM.nextInt(alphaNumericString.length());

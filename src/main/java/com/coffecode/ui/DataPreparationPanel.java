@@ -18,6 +18,7 @@ import javax.swing.table.DefaultTableModel;
 import com.coffecode.controllers.ItemsController;
 import com.coffecode.enums.DataType;
 import com.coffecode.enums.InputType;
+import com.coffecode.handlers.DataPreparationHandler;
 
 public class DataPreparationPanel<T extends Comparable<T>> extends JPanel {
 
@@ -27,9 +28,11 @@ public class DataPreparationPanel<T extends Comparable<T>> extends JPanel {
     private JButton resetButton;
     private JTable dataTable;
     private ItemsController<T> controller;
+    private DataPreparationHandler<T> handler;
 
     public DataPreparationPanel(ItemsController<T> controller) {
         this.controller = controller;
+        this.handler = new DataPreparationHandler<>(controller);
         setLayout(new GridBagLayout());
         setBorder(new TitledBorder("Prepare Data"));
 
@@ -96,23 +99,31 @@ public class DataPreparationPanel<T extends Comparable<T>> extends JPanel {
                 handleResetButton();
             }
         });
+
+        inputTypeComboBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                handleInputTypeChange();
+            }
+        });
     }
 
     private void handleGenerateButton() {
         DataType dataType = (DataType) dataTypeComboBox.getSelectedItem();
         InputType inputType = (InputType) inputTypeComboBox.getSelectedItem();
-
-        if (dataType == DataType.STRING && inputType == InputType.AUTOINPUT) {
-            controller.addRandomStrings(5, 10); // Example parameters
-        } else if (dataType == DataType.INTEGER && inputType == InputType.AUTOINPUT) {
-            controller.addRandomIntegers(1, 100, 10); // Example parameters
-        }
-
+        handler.handleGenerateButton(dataType, inputType);
         updateTable();
     }
 
     private void handleResetButton() {
         controller.resetItems();
+        updateTable();
+    }
+
+    private void handleInputTypeChange() {
+        DataType dataType = (DataType) dataTypeComboBox.getSelectedItem();
+        InputType inputType = (InputType) inputTypeComboBox.getSelectedItem();
+        handler.handleInputTypeChange(dataType, inputType);
         updateTable();
     }
 
