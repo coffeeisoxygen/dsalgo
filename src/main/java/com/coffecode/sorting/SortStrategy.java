@@ -1,9 +1,9 @@
 package com.coffecode.sorting;
 
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.function.ObjIntConsumer;
 
 public interface SortStrategy<T extends Comparable<T>> {
 
-    void sort(List<T> items, Consumer<List<T>> updateUI) throws InterruptedException;
+    void sort(List<T> items, ObjIntConsumer<List<T>> updateUI) throws InterruptedException;
 }

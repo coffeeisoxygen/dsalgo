@@ -22,7 +22,7 @@ import com.coffecode.handlers.SortingHandler;
 public class VisualizationControlPanel<T extends Comparable<T>> extends JPanel {
 
     private JPanel controlPanel;
-    private VisualizationPanel<T> visualizationPanel;
+    private GridPanel<T> gridPanel;
     private SortingHandler<T> sortingHandler;
     private AnimationHandler<T> animationHandler;
     private AnimationController animationController;
@@ -34,11 +34,11 @@ public class VisualizationControlPanel<T extends Comparable<T>> extends JPanel {
 
         // Initialize panels
         controlPanel = new JPanel(new GridBagLayout());
-        visualizationPanel = new VisualizationPanel<>();
+        gridPanel = new GridPanel<>();
         JSpinner speedSpinner = new JSpinner(new SpinnerNumberModel(100, 10, 1000, 10));
 
         // Register data change listener
-        controller.getModel().addDataChangeListener((List<T> data) -> visualizationPanel.updateData(data));
+        controller.getModel().addDataChangeListener((List<T> data) -> gridPanel.updateData(data, -1, -1, -1));
 
         // Create control buttons with icons from FlatLaf
         JButton startPauseButton = new JButton("Start");
@@ -67,25 +67,25 @@ public class VisualizationControlPanel<T extends Comparable<T>> extends JPanel {
 
         // Add panels to main panel
         add(controlPanel, BorderLayout.NORTH);
-        add(visualizationPanel, BorderLayout.CENTER);
+        add(gridPanel, BorderLayout.CENTER);
 
         // Add action listener to start/pause button
         startPauseButton.addActionListener(e -> {
             if (!animationController.isRunning()) {
                 if (controller.getItemSize() == 0) {
-                    JOptionPane.showMessageDialog(this, "No items to sort. Please add items first.", "Error",
-                            JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "No items to sort. Please add items first.", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
                 if (controller.getCurrentSortAlgorithm() == null) {
-                    JOptionPane.showMessageDialog(this,
-                            "Sort algorithm is not set. Please set the sort algorithm first.", "Error",
-                            JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Sort algorithm is not set. Please set the sort algorithm first.", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
                 }
                 int delay = (int) speedSpinner.getValue();
-                animationHandler = new AnimationHandler<>(delay, data -> {
-                    controller.getModel().notifyListeners();
+                animationHandler = new AnimationHandler<>(delay, (data, pointer) -> {
+                    gridPanel.updateData(data, pointer, -1, -1);
+                }, () -> {
+                    animationController.stop();
+                    JOptionPane.showMessageDialog(this, "Sorting completed.");
                 });
                 sortingHandler = new SortingHandler<>(controller, animationHandler);
                 sortingHandler.startSorting();
@@ -116,7 +116,7 @@ public class VisualizationControlPanel<T extends Comparable<T>> extends JPanel {
         stopButton.setEnabled(false);
     }
 
-    public VisualizationPanel<T> getVisualizationPanel() {
-        return visualizationPanel;
+    public GridPanel<T> getGridPanel() {
+        return gridPanel;
     }
 }

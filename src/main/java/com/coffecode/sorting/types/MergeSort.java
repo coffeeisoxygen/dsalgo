@@ -2,18 +2,19 @@ package com.coffecode.sorting.types;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.function.ObjIntConsumer;
 
 import com.coffecode.sorting.SortStrategy;
 
 public class MergeSort<T extends Comparable<T>> implements SortStrategy<T> {
 
     @Override
-    public void sort(List<T> items, Consumer<List<T>> updateUI) throws InterruptedException {
+    public void sort(List<T> items, ObjIntConsumer<List<T>> updateUI) throws InterruptedException {
         mergeSort(items, 0, items.size() - 1, updateUI);
     }
 
-    private void mergeSort(List<T> items, int left, int right, Consumer<List<T>> updateUI) throws InterruptedException {
+    private void mergeSort(List<T> items, int left, int right, ObjIntConsumer<List<T>> updateUI)
+            throws InterruptedException {
         if (left < right) {
             int mid = (left + right) / 2;
             mergeSort(items, left, mid, updateUI);
@@ -22,7 +23,8 @@ public class MergeSort<T extends Comparable<T>> implements SortStrategy<T> {
         }
     }
 
-    private void merge(List<T> items, int left, int mid, int right, Consumer<List<T>> updateUI) {
+    private void merge(List<T> items, int left, int mid, int right, ObjIntConsumer<List<T>> updateUI)
+            throws InterruptedException {
         int n1 = mid - left + 1;
         int n2 = right - mid;
 
@@ -48,21 +50,24 @@ public class MergeSort<T extends Comparable<T>> implements SortStrategy<T> {
                 j++;
             }
             k++;
-            updateUI.accept(new ArrayList<>(items));
+            updateUI.accept(new ArrayList<>(items), k - 1);
+            Thread.sleep(100); // Delay for visualization
         }
 
         while (i < n1) {
             items.set(k, leftArray.get(i));
             i++;
             k++;
-            updateUI.accept(new ArrayList<>(items));
+            updateUI.accept(new ArrayList<>(items), k - 1);
+            Thread.sleep(100); // Delay for visualization
         }
 
         while (j < n2) {
             items.set(k, rightArray.get(j));
             j++;
             k++;
-            updateUI.accept(new ArrayList<>(items));
+            updateUI.accept(new ArrayList<>(items), k - 1);
+            Thread.sleep(100); // Delay for visualization
         }
     }
 }

@@ -8,18 +8,14 @@ import javax.swing.JPanel;
 public class GridPanel<T extends Comparable<T>> extends JPanel {
 
     private VisualizationPanel<T> visualizationPanel;
-    private PointerPanel pointerPanel;
 
     public GridPanel() {
-        setLayout(new GridLayout(2, 1)); // 2 rows, 1 column
+        setLayout(new GridLayout(1, 1)); // 1 row, 1 column
         visualizationPanel = new VisualizationPanel<>();
-        pointerPanel = new PointerPanel();
         add(visualizationPanel);
-        add(pointerPanel);
     }
 
-    public void updateData(List<T> data, int pointer) {
-        visualizationPanel.updateData(data);
-        pointerPanel.updatePointer(pointer, data.size());
+    public void updateData(List<T> data, int pointer, int swapIndex1, int swapIndex2) {
+        visualizationPanel.updateData(data, pointer, swapIndex1, swapIndex2);
     }
 }

@@ -103,7 +103,7 @@ public class ItemsModel<T extends Comparable<T>> implements IItemsModel<T> {
         if (this.sortStrategy != null) {
             try {
                 logger.info("Starting sort with strategy: {}", this.currentSortAlgorithm);
-                this.sortStrategy.sort(this.itemList, animationHandler::animate);
+                this.sortStrategy.sort(this.itemList, (data, pointer) -> animationHandler.animate(data, pointer));
                 this.isSorted = true;
                 notifyListeners();
                 logger.info("Sorting completed.");

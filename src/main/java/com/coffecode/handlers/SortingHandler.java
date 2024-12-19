@@ -5,9 +5,9 @@ import com.coffecode.controllers.ItemsController;
 public class SortingHandler<T extends Comparable<T>> {
 
     private final ItemsController<T> controller;
-    private final IAnimate animationHandler;
+    private final AnimationHandler<T> animationHandler;
 
-    public SortingHandler(ItemsController<T> controller, IAnimate animationHandler) {
+    public SortingHandler(ItemsController<T> controller, AnimationHandler<T> animationHandler) {
         this.controller = controller;
         this.animationHandler = animationHandler;
     }
@@ -15,7 +15,8 @@ public class SortingHandler<T extends Comparable<T>> {
     public void startSorting() {
         new Thread(() -> {
             try {
-                controller.getModel().sortItems((AnimationHandler<T>) animationHandler);
+                controller.getModel().sortItems(animationHandler);
+                animationHandler.complete();
             } catch (Exception e) {
                 e.printStackTrace();
             }
