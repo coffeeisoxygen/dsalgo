@@ -3,6 +3,7 @@ package com.coffecode.models;
 import java.util.List;
 
 import com.coffecode.enums.SortAlgorithmType;
+import com.coffecode.handlers.AnimationHandler;
 
 public interface IItemsModel<T extends Comparable<T>> {
 
@@ -25,7 +26,7 @@ public interface IItemsModel<T extends Comparable<T>> {
     void setSortStrategy(SortAlgorithmType type);
 
     // Method to sort the list using the current strategy
-    void sortItems();
+    void sortItems(AnimationHandler<T> animationHandler);
 
     // Method to check if the list is sorted
     boolean isSorted();

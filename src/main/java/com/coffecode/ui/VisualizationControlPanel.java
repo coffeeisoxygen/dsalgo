@@ -15,14 +15,14 @@ import javax.swing.border.TitledBorder;
 
 import com.coffecode.context.AppContext;
 import com.coffecode.controllers.ItemsController;
+import com.coffecode.handlers.AnimationHandler;
 import com.coffecode.handlers.SortingHandler;
-import com.coffecode.models.DataChangeListener;
 
 public class VisualizationControlPanel<T extends Comparable<T>> extends JPanel {
 
     private JPanel controlPanel;
     private VisualizationPanel<T> visualizationPanel;
-    private transient SortingHandler<T> sortingHandler;
+    private SortingHandler<T> sortingHandler;
 
     public VisualizationControlPanel(AppContext<T> context) {
         ItemsController<T> controller = context.getItemsController();
@@ -32,14 +32,11 @@ public class VisualizationControlPanel<T extends Comparable<T>> extends JPanel {
         // Initialize panels
         controlPanel = new JPanel(new GridBagLayout());
         visualizationPanel = new VisualizationPanel<>();
-        sortingHandler = new SortingHandler<>(controller);
+        JSpinner speedSpinner = new JSpinner(new SpinnerNumberModel(100, 10, 1000, 10));
 
         // Register data change listener
-        controller.getModel().addDataChangeListener(new DataChangeListener<T>() {
-            @Override
-            public void onDataChanged(List<T> data) {
-                visualizationPanel.updateData(data);
-            }
+        controller.getModel().addDataChangeListener((List<T> data) -> {
+            visualizationPanel.updateData(data);
         });
 
         // Create control buttons with icons from FlatLaf
@@ -49,9 +46,6 @@ public class VisualizationControlPanel<T extends Comparable<T>> extends JPanel {
         JButton resetButton = new JButton(UIManager.getIcon("FileView.hardDriveIcon"));
         JButton nextButton = new JButton(UIManager.getIcon("FileView.floppyDriveIcon"));
         JButton prevButton = new JButton(UIManager.getIcon("FileView.floppyDriveIcon"));
-
-        // Create a spinner for speed control
-        JSpinner speedSpinner = new JSpinner(new SpinnerNumberModel(1, 1, 10, 1));
 
         // Add buttons and spinner to control panel
         GridBagConstraints gbc = new GridBagConstraints();
@@ -78,7 +72,13 @@ public class VisualizationControlPanel<T extends Comparable<T>> extends JPanel {
         add(visualizationPanel, BorderLayout.CENTER);
 
         // Add action listener to start button
-        startButton.addActionListener(e -> sortingHandler.startSorting());
+        startButton.addActionListener(e -> {
+            AnimationHandler<T> animationHandler = new AnimationHandler<>((int) speedSpinner.getValue(), data -> {
+                controller.getModel().notifyListeners();
+            });
+            sortingHandler = new SortingHandler<>(controller, animationHandler);
+            sortingHandler.startSorting();
+        });
     }
 
     public VisualizationPanel<T> getVisualizationPanel() {

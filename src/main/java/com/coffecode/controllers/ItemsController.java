@@ -3,11 +3,12 @@ package com.coffecode.controllers;
 import java.util.List;
 
 import com.coffecode.enums.SortAlgorithmType;
+import com.coffecode.handlers.AnimationHandler;
 import com.coffecode.models.ItemsModel;
 
 public class ItemsController<T extends Comparable<T>> {
 
-    private ItemsModel<T> model;
+    private final ItemsModel<T> model;
 
     public ItemsController(ItemsModel<T> model) {
         this.model = model;
@@ -41,8 +42,8 @@ public class ItemsController<T extends Comparable<T>> {
         model.setSortStrategy(type);
     }
 
-    public void sortItems() {
-        model.sortItems();
+    public void sortItems(AnimationHandler<T> animationHandler) {
+        model.sortItems(animationHandler);
     }
 
     public boolean isSorted() {

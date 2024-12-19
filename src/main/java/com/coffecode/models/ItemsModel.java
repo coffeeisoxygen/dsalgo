@@ -4,18 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.coffecode.enums.SortAlgorithmType;
+import com.coffecode.handlers.AnimationHandler;
 import com.coffecode.helper.RandomGenerator;
 import com.coffecode.sorting.SortStrategy;
 import com.coffecode.sorting.factory.SortFactory;
 
 public class ItemsModel<T extends Comparable<T>> implements IItemsModel<T> {
 
-    private List<T> itemList;
+    private final List<T> itemList;
     private int itemSize;
     private SortStrategy<T> sortStrategy;
     private boolean isSorted;
     private SortAlgorithmType currentSortAlgorithm;
-    private List<DataChangeListener<T>> listeners;
+    private final List<DataChangeListener<T>> listeners;
 
     public ItemsModel() {
         this.itemList = new ArrayList<>();
@@ -90,13 +91,14 @@ public class ItemsModel<T extends Comparable<T>> implements IItemsModel<T> {
 
     // Method to sort the list using the current strategy
     @Override
-    public void sortItems() {
+    public void sortItems(AnimationHandler<T> animationHandler) {
         if (this.sortStrategy != null) {
             try {
-                this.sortStrategy.sort(this.itemList);
+                this.sortStrategy.sort(this.itemList, animationHandler::animate);
                 this.isSorted = true;
                 notifyListeners();
             } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
                 e.printStackTrace();
             }
         }

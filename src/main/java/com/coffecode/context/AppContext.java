@@ -5,8 +5,8 @@ import com.coffecode.models.ItemsModel;
 
 public class AppContext<T extends Comparable<T>> {
 
-    private ItemsModel<T> itemsModel;
-    private ItemsController<T> itemsController;
+    private final ItemsModel<T> itemsModel;
+    private final ItemsController<T> itemsController;
 
     public AppContext() {
         // Initialize model and controller

@@ -2,26 +2,27 @@ package com.coffecode.sorting.types;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import com.coffecode.sorting.SortStrategy;
 
 public class MergeSort<T extends Comparable<T>> implements SortStrategy<T> {
 
     @Override
-    public void sort(List<T> items) {
-        mergeSort(items, 0, items.size() - 1);
+    public void sort(List<T> items, Consumer<List<T>> updateUI) throws InterruptedException {
+        mergeSort(items, 0, items.size() - 1, updateUI);
     }
 
-    private void mergeSort(List<T> items, int left, int right) {
+    private void mergeSort(List<T> items, int left, int right, Consumer<List<T>> updateUI) throws InterruptedException {
         if (left < right) {
             int mid = (left + right) / 2;
-            mergeSort(items, left, mid);
-            mergeSort(items, mid + 1, right);
-            merge(items, left, mid, right);
+            mergeSort(items, left, mid, updateUI);
+            mergeSort(items, mid + 1, right, updateUI);
+            merge(items, left, mid, right, updateUI);
         }
     }
 
-    private void merge(List<T> items, int left, int mid, int right) {
+    private void merge(List<T> items, int left, int mid, int right, Consumer<List<T>> updateUI) {
         int n1 = mid - left + 1;
         int n2 = right - mid;
 
@@ -47,18 +48,21 @@ public class MergeSort<T extends Comparable<T>> implements SortStrategy<T> {
                 j++;
             }
             k++;
+            updateUI.accept(new ArrayList<>(items));
         }
 
         while (i < n1) {
             items.set(k, leftArray.get(i));
             i++;
             k++;
+            updateUI.accept(new ArrayList<>(items));
         }
 
         while (j < n2) {
             items.set(k, rightArray.get(j));
             j++;
             k++;
+            updateUI.accept(new ArrayList<>(items));
         }
     }
 }
