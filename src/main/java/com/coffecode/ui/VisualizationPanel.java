@@ -7,11 +7,22 @@ import net.miginfocom.swing.MigLayout;
 
 public class VisualizationPanel extends JPanel {
 
-    public VisualizationPanel() {
-        setLayout(new MigLayout("", "[grow][grow]", "[grow]"));
+    private JPanel beforePanel;
+    private JPanel afterPanel;
 
-        // Placeholder for visualization components
-        JLabel placeholder = new JLabel("Visualization Area");
-        add(placeholder, "span, align center");
+    public VisualizationPanel() {
+        beforePanel = new JPanel(new MigLayout("", "[grow]", "[grow]"));
+        afterPanel = new JPanel(new MigLayout("", "[grow]", "[grow]"));
+
+        beforePanel.add(new JLabel("Before Sorting Visualization Area"), "align center");
+        afterPanel.add(new JLabel("After Sorting Visualization Area"), "align center");
+    }
+
+    public JPanel getBeforePanel() {
+        return beforePanel;
+    }
+
+    public JPanel getAfterPanel() {
+        return afterPanel;
     }
 }

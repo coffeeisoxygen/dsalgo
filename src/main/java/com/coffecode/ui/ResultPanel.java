@@ -1,17 +1,21 @@
 package com.coffecode.ui;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import java.awt.BorderLayout;
 
-import net.miginfocom.swing.MigLayout;
+import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 
 public class ResultPanel extends JPanel {
 
-    public ResultPanel() {
-        setLayout(new MigLayout("", "[grow]", "[grow]"));
+    private JTable resultTable;
 
-        // Placeholder for result components
-        JLabel placeholder = new JLabel("Result Area");
-        add(placeholder, "span, align center");
+    public ResultPanel() {
+        setLayout(new BorderLayout());
+
+        resultTable = new JTable(
+                new DefaultTableModel(new Object[] { "Algorithm", "Order", "Time (ms)", "Result" }, 0));
+        add(resultTable.getTableHeader(), BorderLayout.NORTH);
+        add(resultTable, BorderLayout.CENTER);
     }
 }

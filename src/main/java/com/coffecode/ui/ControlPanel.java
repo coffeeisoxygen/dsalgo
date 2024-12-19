@@ -1,19 +1,22 @@
 package com.coffecode.ui;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JSpinner;
+import javax.swing.JTextArea;
 import javax.swing.SpinnerNumberModel;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import javax.swing.border.EmptyBorder;
 
 import com.coffecode.enums.DataType;
 import com.coffecode.enums.SortAlgorithmType;
 import com.coffecode.enums.SortOrder;
-
-import net.miginfocom.swing.MigLayout;
 
 public class ControlPanel extends JPanel {
 
@@ -23,9 +26,16 @@ public class ControlPanel extends JPanel {
     private JComboBox<String> inputTypeComboBox;
     private JButton processButton;
     private JSpinner timerSpinner;
+    private JTextArea manualInputArea;
 
     public ControlPanel() {
-        setLayout(new MigLayout("", "[][grow][][]", ""));
+        setLayout(new GridBagLayout());
+        setBorder(new EmptyBorder(10, 10, 10, 10));
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.gridx = 0;
+        gbc.gridy = 0;
 
         // Create components
         JLabel dataTypeLabel = new JLabel("Data Type:");
@@ -39,42 +49,63 @@ public class ControlPanel extends JPanel {
 
         JLabel inputTypeLabel = new JLabel("Input Type:");
         inputTypeComboBox = new JComboBox<>(new String[] { "Manual", "Auto" });
+        inputTypeComboBox.addActionListener(e -> {
+            boolean isManual = "Manual".equals(inputTypeComboBox.getSelectedItem());
+            manualInputArea.setEnabled(isManual);
+            if (!isManual) {
+                manualInputArea.setText("[Auto-generated input will be here]");
+            }
+        });
 
         JLabel timerLabel = new JLabel("Timer (ms):");
         timerSpinner = new JSpinner(new SpinnerNumberModel(100, 10, 5000, 10));
 
+        manualInputArea = new JTextArea(5, 20);
+        manualInputArea.setEnabled(false);
+
         processButton = new JButton("Process");
 
         // Add components to panel
-        add(dataTypeLabel, "gapright 10");
-        add(dataTypeComboBox, "growx, wrap");
+        add(dataTypeLabel, gbc);
+        gbc.gridx = 1;
+        add(dataTypeComboBox, gbc);
 
-        add(algorithmLabel, "gapright 10");
-        add(sortAlgorithmComboBox, "growx, wrap");
+        gbc.gridx = 0;
+        gbc.gridy++;
+        add(algorithmLabel, gbc);
+        gbc.gridx = 1;
+        add(sortAlgorithmComboBox, gbc);
 
-        add(sortOrderLabel, "gapright 10");
-        add(sortOrderComboBox, "growx, wrap");
+        gbc.gridx = 0;
+        gbc.gridy++;
+        add(sortOrderLabel, gbc);
+        gbc.gridx = 1;
+        add(sortOrderComboBox, gbc);
 
-        add(inputTypeLabel, "gapright 10");
-        add(inputTypeComboBox, "growx, wrap");
+        gbc.gridx = 0;
+        gbc.gridy++;
+        add(inputTypeLabel, gbc);
+        gbc.gridx = 1;
+        add(inputTypeComboBox, gbc);
 
-        add(timerLabel, "gapright 10");
-        add(timerSpinner, "growx, wrap");
+        gbc.gridx = 0;
+        gbc.gridy++;
+        add(timerLabel, gbc);
+        gbc.gridx = 1;
+        add(timerSpinner, gbc);
 
-        add(processButton, "span, align center");
+        gbc.gridx = 0;
+        gbc.gridy++;
+        gbc.gridwidth = 2;
+        add(new JLabel("Manual Input:"), gbc);
 
-        // Action listener for process button
-        processButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Placeholder for processing logic
-                System.out.println("Process initiated with:");
-                System.out.println("Data Type: " + dataTypeComboBox.getSelectedItem());
-                System.out.println("Algorithm: " + sortAlgorithmComboBox.getSelectedItem());
-                System.out.println("Sort Order: " + sortOrderComboBox.getSelectedItem());
-                System.out.println("Input Type: " + inputTypeComboBox.getSelectedItem());
-                System.out.println("Timer: " + timerSpinner.getValue() + " ms");
-            }
-        });
+        gbc.gridy++;
+        add(manualInputArea, gbc);
+
+        gbc.gridy++;
+        add(new JSeparator(), gbc);
+
+        gbc.gridy++;
+        add(processButton, gbc);
     }
 }
