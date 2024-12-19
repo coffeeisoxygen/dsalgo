@@ -3,7 +3,9 @@ package com.coffecode.models;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.coffecode.enums.SortAlgorithmType;
 import com.coffecode.interfaces.SortStrategy;
+import com.coffecode.sorting.factory.SortFactory;
 
 public class ItemsModel {
 
@@ -34,8 +36,8 @@ public class ItemsModel {
     }
 
     // Method to set the sorting strategy
-    public void setSortStrategy(SortStrategy sortStrategy) {
-        this.sortStrategy = sortStrategy;
+    public void setSortStrategy(SortAlgorithmType type) {
+        this.sortStrategy = SortFactory.getSortStrategy(type);
     }
 
     // Method to sort the list using the current strategy
