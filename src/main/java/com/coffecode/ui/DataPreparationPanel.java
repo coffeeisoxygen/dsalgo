@@ -121,10 +121,7 @@ public class DataPreparationPanel<T extends Comparable<T>> extends JPanel {
     }
 
     private void handleInputTypeChange() {
-        DataType dataType = (DataType) dataTypeComboBox.getSelectedItem();
-        InputType inputType = (InputType) inputTypeComboBox.getSelectedItem();
-        handler.handleInputTypeChange(dataType, inputType);
-        updateTable();
+        // No need to handle input type change here
     }
 
     private void updateTable() {

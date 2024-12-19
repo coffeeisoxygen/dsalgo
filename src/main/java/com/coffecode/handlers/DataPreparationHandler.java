@@ -12,9 +12,11 @@ import com.coffecode.enums.InputType;
 public class DataPreparationHandler<T extends Comparable<T>> {
 
     private final ItemsController<T> controller;
+    private DataType currentDataType;
 
     public DataPreparationHandler(ItemsController<T> controller) {
         this.controller = controller;
+        this.currentDataType = null;
     }
 
     @SuppressWarnings("unchecked")
@@ -22,27 +24,34 @@ public class DataPreparationHandler<T extends Comparable<T>> {
         return (List<T>) list;
     }
 
-    public void handleInputTypeChange(DataType dataType, InputType inputType) {
-        controller.resetItems();
+    public void handleGenerateButton(DataType dataType, InputType inputType) {
+        if (controller.getItemSize() > 0 && currentDataType != null && currentDataType != dataType) {
+            JOptionPane.showMessageDialog(null,
+                    "Data sebelumnya adalah tipe " + currentDataType + ". Harap masukkan data yang sejenis.", "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
         if (inputType == InputType.MANUALINPUT) {
             String input = JOptionPane.showInputDialog(null, getInputMessage(dataType), "Manual Input",
                     JOptionPane.PLAIN_MESSAGE);
-            if (input != null && !input.trim().isEmpty() && isValidInput(dataType, input)) {
-                List<T> items = parseInput(dataType, input);
-                controller.addItemsFromUserInput(items);
-            } else {
-                JOptionPane.showMessageDialog(null, "Input tidak valid. Silakan coba lagi.", "Error",
-                        JOptionPane.ERROR_MESSAGE);
+            if (input != null && !input.trim().isEmpty()) {
+                if (isValidInput(dataType, input)) {
+                    List<T> items = parseInput(dataType, input);
+                    controller.addItemsFromUserInput(items);
+                    currentDataType = dataType;
+                } else {
+                    JOptionPane.showMessageDialog(null, "Input tidak valid. Silakan coba lagi.", "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                }
             }
-        }
-    }
-
-    public void handleGenerateButton(DataType dataType, InputType inputType) {
-        if (dataType == DataType.STRING && inputType == InputType.AUTOINPUT) {
-            controller.addRandomStrings(5, 10); // Example parameters
-        } else if (dataType == DataType.INTEGER && inputType == InputType.AUTOINPUT) {
-            controller.addRandomIntegers(1, 100, 10); // Example parameters
+        } else if (inputType == InputType.AUTOINPUT) {
+            if (dataType == DataType.STRING) {
+                controller.addRandomStrings(5, 10); // Example parameters
+            } else if (dataType == DataType.INTEGER) {
+                controller.addRandomIntegers(1, 100, 10); // Example parameters
+            }
+            currentDataType = dataType;
         }
     }
 
