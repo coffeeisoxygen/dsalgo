@@ -4,26 +4,31 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
+import com.coffecode.controllers.ItemsController;
 import com.coffecode.enums.SortAlgorithmType;
 import com.coffecode.enums.SortOrder;
 
-public class AlgorithmSettingsPanel extends JPanel {
+public class AlgorithmSettingsPanel<T extends Comparable<T>> extends JPanel {
 
     private JComboBox<SortAlgorithmType> algorithmComboBox;
     private JComboBox<SortOrder> sortOrderComboBox;
     private JTextField memoryField;
     private JTextField timeUseField;
     private JTextArea descriptionArea;
+    private ItemsController<T> controller;
 
-    public AlgorithmSettingsPanel() {
+    public AlgorithmSettingsPanel(ItemsController<T> controller) {
+        this.controller = controller;
         setLayout(new GridBagLayout());
         setBorder(new TitledBorder("Algorithm Settings"));
 
@@ -51,6 +56,8 @@ public class AlgorithmSettingsPanel extends JPanel {
         descriptionArea = new JTextArea(5, 20);
         descriptionArea.setBorder(new TitledBorder("Description"));
         JScrollPane descriptionScrollPane = new JScrollPane(descriptionArea);
+
+        JButton setAlgorithmButton = new JButton("Set Algorithm");
 
         // Add components to panel
         add(algorithmLabel, gbc);
@@ -82,5 +89,22 @@ public class AlgorithmSettingsPanel extends JPanel {
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
         add(descriptionScrollPane, gbc);
+
+        gbc.gridy++;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 0;
+        gbc.weighty = 0;
+        add(setAlgorithmButton, gbc);
+
+        // Add action listener to set algorithm button
+        setAlgorithmButton.addActionListener(e -> {
+            SortAlgorithmType selectedAlgorithm = (SortAlgorithmType) algorithmComboBox.getSelectedItem();
+            if (selectedAlgorithm != null) {
+                controller.setSortStrategy(selectedAlgorithm);
+                JOptionPane.showMessageDialog(this, "Sort algorithm set to: " + selectedAlgorithm);
+            } else {
+                JOptionPane.showMessageDialog(this, "Please select a sort algorithm.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
     }
 }

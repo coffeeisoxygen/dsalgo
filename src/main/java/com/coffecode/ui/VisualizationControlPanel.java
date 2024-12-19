@@ -7,10 +7,10 @@ import java.awt.Insets;
 import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
 
 import com.coffecode.context.AppContext;
@@ -23,6 +23,7 @@ public class VisualizationControlPanel<T extends Comparable<T>> extends JPanel {
     private JPanel controlPanel;
     private VisualizationPanel<T> visualizationPanel;
     private SortingHandler<T> sortingHandler;
+    private AnimationHandler<T> animationHandler;
 
     public VisualizationControlPanel(AppContext<T> context) {
         ItemsController<T> controller = context.getItemsController();
@@ -35,17 +36,21 @@ public class VisualizationControlPanel<T extends Comparable<T>> extends JPanel {
         JSpinner speedSpinner = new JSpinner(new SpinnerNumberModel(100, 10, 1000, 10));
 
         // Register data change listener
-        controller.getModel().addDataChangeListener((List<T> data) -> {
-            visualizationPanel.updateData(data);
-        });
+        controller.getModel().addDataChangeListener((List<T> data) -> visualizationPanel.updateData(data));
 
         // Create control buttons with icons from FlatLaf
-        JButton startButton = new JButton(UIManager.getIcon("FileView.fileIcon"));
-        JButton pauseButton = new JButton(UIManager.getIcon("FileView.directoryIcon"));
-        JButton stopButton = new JButton(UIManager.getIcon("FileView.computerIcon"));
-        JButton resetButton = new JButton(UIManager.getIcon("FileView.hardDriveIcon"));
-        JButton nextButton = new JButton(UIManager.getIcon("FileView.floppyDriveIcon"));
-        JButton prevButton = new JButton(UIManager.getIcon("FileView.floppyDriveIcon"));
+        JButton startButton = new JButton("Start");
+        startButton.setBackground(java.awt.Color.GREEN);
+        JButton pauseButton = new JButton("Pause");
+        pauseButton.setBackground(java.awt.Color.YELLOW);
+        JButton stopButton = new JButton("Stop");
+        stopButton.setBackground(java.awt.Color.RED);
+        JButton resetButton = new JButton("Reset");
+        resetButton.setBackground(java.awt.Color.ORANGE);
+        JButton nextButton = new JButton("Next");
+        nextButton.setBackground(java.awt.Color.CYAN);
+        JButton prevButton = new JButton("Prev");
+        prevButton.setBackground(java.awt.Color.CYAN);
 
         // Add buttons and spinner to control panel
         GridBagConstraints gbc = new GridBagConstraints();
@@ -53,8 +58,6 @@ public class VisualizationControlPanel<T extends Comparable<T>> extends JPanel {
         gbc.gridx = 0;
         gbc.gridy = 0;
 
-        controlPanel.add(prevButton, gbc);
-        gbc.gridx++;
         controlPanel.add(startButton, gbc);
         gbc.gridx++;
         controlPanel.add(pauseButton, gbc);
@@ -65,6 +68,8 @@ public class VisualizationControlPanel<T extends Comparable<T>> extends JPanel {
         gbc.gridx++;
         controlPanel.add(nextButton, gbc);
         gbc.gridx++;
+        controlPanel.add(prevButton, gbc);
+        gbc.gridx++;
         controlPanel.add(speedSpinner, gbc);
 
         // Add panels to main panel
@@ -73,11 +78,47 @@ public class VisualizationControlPanel<T extends Comparable<T>> extends JPanel {
 
         // Add action listener to start button
         startButton.addActionListener(e -> {
-            AnimationHandler<T> animationHandler = new AnimationHandler<>((int) speedSpinner.getValue(), data -> {
+            if (controller.getItemSize() == 0) {
+                JOptionPane.showMessageDialog(this, "No items to sort. Please add items first.", "Error",
+                        JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if (controller.getCurrentSortAlgorithm() == null) {
+                JOptionPane.showMessageDialog(this, "Sort algorithm is not set. Please set the sort algorithm first.",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            int delay = (int) speedSpinner.getValue();
+            animationHandler = new AnimationHandler<>(delay, data -> {
                 controller.getModel().notifyListeners();
             });
             sortingHandler = new SortingHandler<>(controller, animationHandler);
             sortingHandler.startSorting();
+        });
+
+        // Add action listener to reset button
+        resetButton.addActionListener(e -> {
+            controller.resetItems();
+        });
+
+        // Add action listener to pause button
+        pauseButton.addActionListener(e -> {
+            // Implement pause functionality
+        });
+
+        // Add action listener to stop button
+        stopButton.addActionListener(e -> {
+            // Implement stop functionality
+        });
+
+        // Add action listener to next button
+        nextButton.addActionListener(e -> {
+            // Implement next step functionality
+        });
+
+        // Add action listener to prev button
+        prevButton.addActionListener(e -> {
+            // Implement previous step functionality
         });
     }
 

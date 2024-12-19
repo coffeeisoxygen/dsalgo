@@ -13,7 +13,7 @@ import com.coffecode.context.AppContext;
 public class MainFrame<T extends Comparable<T>> extends JFrame {
 
     private DataPreparationPanel<T> dataPreparationPanel;
-    private AlgorithmSettingsPanel algorithmSettingsPanel;
+    private AlgorithmSettingsPanel<T> algorithmSettingsPanel;
     private VisualizationControlPanel<T> visualizationControlPanel;
 
     public MainFrame(AppContext<T> context) {
@@ -25,7 +25,7 @@ public class MainFrame<T extends Comparable<T>> extends JFrame {
 
         // Initialize panels with controller from context
         dataPreparationPanel = new DataPreparationPanel<>(context.getItemsController());
-        algorithmSettingsPanel = new AlgorithmSettingsPanel();
+        algorithmSettingsPanel = new AlgorithmSettingsPanel<>(context.getItemsController());
         visualizationControlPanel = new VisualizationControlPanel<>(context);
 
         // Set static size for DataPreparationPanel
@@ -38,7 +38,10 @@ public class MainFrame<T extends Comparable<T>> extends JFrame {
 
         // Set up split pane between AlgorithmSettingsPanel and VisualizationControlPanel
         JSplitPane mainSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, sidePanel, visualizationControlPanel);
-        mainSplitPane.setResizeWeight(0.3);        mainSplitPane.setDividerLocation(400); // Set initial position for horizontal split pane        // Add panels to frame
+        mainSplitPane.setResizeWeight(0.3);
+        mainSplitPane.setDividerLocation(400); // Set initial position for horizontal split pane
+
+        // Add panels to frame
         add(mainSplitPane, BorderLayout.CENTER);
 
         setVisible(true);

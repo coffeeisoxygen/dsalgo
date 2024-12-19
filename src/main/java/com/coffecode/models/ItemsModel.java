@@ -3,6 +3,9 @@ package com.coffecode.models;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.coffecode.enums.SortAlgorithmType;
 import com.coffecode.handlers.AnimationHandler;
 import com.coffecode.helper.RandomGenerator;
@@ -10,6 +13,8 @@ import com.coffecode.sorting.SortStrategy;
 import com.coffecode.sorting.factory.SortFactory;
 
 public class ItemsModel<T extends Comparable<T>> implements IItemsModel<T> {
+
+    private static final Logger logger = LogManager.getLogger(ItemsModel.class);
 
     private final List<T> itemList;
     private int itemSize;
@@ -40,6 +45,7 @@ public class ItemsModel<T extends Comparable<T>> implements IItemsModel<T> {
             this.itemSize = this.itemList.size();
             this.isSorted = false; // Reset isSorted flag when a new item is added
             notifyListeners();
+            logger.info("Item added: {}", item);
         } else {
             throw new IllegalArgumentException("Invalid item: " + item);
         }
@@ -80,6 +86,7 @@ public class ItemsModel<T extends Comparable<T>> implements IItemsModel<T> {
         this.itemSize = 0;
         this.isSorted = false; // Reset isSorted flag when items are reset
         notifyListeners();
+        logger.info("Items reset.");
     }
 
     // Method to set the sorting strategy
@@ -87,6 +94,7 @@ public class ItemsModel<T extends Comparable<T>> implements IItemsModel<T> {
     public void setSortStrategy(SortAlgorithmType type) {
         this.sortStrategy = SortFactory.getSortStrategy(type);
         this.currentSortAlgorithm = type;
+        logger.info("Sort strategy set to: {}", type);
     }
 
     // Method to sort the list using the current strategy
@@ -94,13 +102,16 @@ public class ItemsModel<T extends Comparable<T>> implements IItemsModel<T> {
     public void sortItems(AnimationHandler<T> animationHandler) {
         if (this.sortStrategy != null) {
             try {
+                logger.info("Starting sort with strategy: {}", this.currentSortAlgorithm);
                 this.sortStrategy.sort(this.itemList, animationHandler::animate);
                 this.isSorted = true;
                 notifyListeners();
+                logger.info("Sorting completed.");
             } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                e.printStackTrace();
+                logger.error("Sorting interrupted.", e);
             }
+        } else {
+            logger.warn("Sort strategy is not set.");
         }
     }
 
