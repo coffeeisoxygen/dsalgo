@@ -1,8 +1,11 @@
 package com.coffecode.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GridLayout;
 
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
 import com.coffecode.context.AppContext;
@@ -15,8 +18,11 @@ public class MainFrame extends JFrame {
 
     public MainFrame(AppContext context) {
         super("Sorting App");
-        setSize(1200, 800);
+        setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        // Initialize panels with controller from context
+        dataPreparationPanel = new DataPreparationPanel<>(context.getItemsController());
+        algorithmSettingsPanel = new AlgorithmSettingsPanel();
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
@@ -25,14 +31,17 @@ public class MainFrame extends JFrame {
         algorithmSettingsPanel = new AlgorithmSettingsPanel();
         visualizationControlPanel = new VisualizationControlPanel();
 
-        // Set up split panes
-        JSplitPane leftSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, dataPreparationPanel, algorithmSettingsPanel);
-        leftSplitPane.setResizeWeight(0.5);
+        // Set static size for DataPreparationPanel
+        dataPreparationPanel.setPreferredSize(new Dimension(200, getHeight()));
 
-        JSplitPane mainSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftSplitPane, visualizationControlPanel);
-        mainSplitPane.setResizeWeight(0.3);
+        // Create a panel to hold DataPreparationPanel and AlgorithmSettingsPanel side by side
+        JPanel sidePanel = new JPanel(new GridLayout(1, 2));
+        sidePanel.add(dataPreparationPanel);
+        sidePanel.add(algorithmSettingsPanel);
 
-        // Add panels to frame
+        // Set up split pane between AlgorithmSettingsPanel and VisualizationControlPanel
+        JSplitPane mainSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, sidePanel, visualizationControlPanel);
+        mainSplitPane.setResizeWeight(0.3);        mainSplitPane.setDividerLocation(400); // Set initial position for horizontal split pane        // Add panels to frame
         add(mainSplitPane, BorderLayout.CENTER);
 
         setVisible(true);
