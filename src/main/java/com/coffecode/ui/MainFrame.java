@@ -7,32 +7,33 @@ import javax.swing.JSplitPane;
 
 public class MainFrame extends JFrame {
 
-    private ControlPanel controlPanel;
-    private VisualizationPanel visualizationPanel;
-    private ResultPanel resultPanel;
+    private DataPreparationPanel dataPreparationPanel;
+    private AlgorithmSettingsPanel algorithmSettingsPanel;
+    private VisualizationControlPanel visualizationControlPanel;
 
     public MainFrame() {
         super("Sorting App");
-        setSize(1000, 700);
+        setSize(1200, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
         // Initialize panels
-        controlPanel = new ControlPanel();
-        visualizationPanel = new VisualizationPanel();
-        resultPanel = new ResultPanel();
+        dataPreparationPanel = new DataPreparationPanel();
+        algorithmSettingsPanel = new AlgorithmSettingsPanel();
+        visualizationControlPanel = new VisualizationControlPanel();
 
         // Set up split panes
-        JSplitPane visualizationSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, visualizationPanel.getBeforePanel(), visualizationPanel.getAfterPanel());
-        visualizationSplitPane.setResizeWeight(0.5);
+        JSplitPane leftSplitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, dataPreparationPanel,
+                algorithmSettingsPanel);
+        leftSplitPane.setResizeWeight(0.5);
 
-        JSplitPane mainSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, controlPanel, visualizationSplitPane);
-        mainSplitPane.setResizeWeight(0.2);
+        JSplitPane mainSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftSplitPane,
+                visualizationControlPanel);
+        mainSplitPane.setResizeWeight(0.3);
 
         // Add panels to frame
         add(mainSplitPane, BorderLayout.CENTER);
-        add(resultPanel, BorderLayout.SOUTH);
 
         setVisible(true);
     }
