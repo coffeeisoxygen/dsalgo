@@ -7,6 +7,9 @@ import java.awt.Insets;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
 
 public class VisualizationControlPanel extends JPanel {
@@ -22,18 +25,25 @@ public class VisualizationControlPanel extends JPanel {
         controlPanel = new JPanel(new GridBagLayout());
         visualizationPanel = new VisualizationPanel();
 
-        // Create control buttons
-        JButton startButton = new JButton("Start");
-        JButton pauseButton = new JButton("Pause");
-        JButton stopButton = new JButton("Stop");
-        JButton resetButton = new JButton("Reset");
+        // Create control buttons with icons
+        JButton startButton = new JButton(UIManager.getIcon("FileView.fileIcon"));
+        JButton pauseButton = new JButton(UIManager.getIcon("FileView.directoryIcon"));
+        JButton stopButton = new JButton(UIManager.getIcon("FileView.computerIcon"));
+        JButton resetButton = new JButton(UIManager.getIcon("FileView.hardDriveIcon"));
+        JButton nextButton = new JButton(UIManager.getIcon("FileView.floppyDriveIcon"));
+        JButton prevButton = new JButton(UIManager.getIcon("FileView.floppyDriveIcon"));
 
-        // Add buttons to control panel
+        // Create a spinner for speed control
+        JSpinner speedSpinner = new JSpinner(new SpinnerNumberModel(1, 1, 10, 1));
+
+        // Add buttons and spinner to control panel
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.gridx = 0;
         gbc.gridy = 0;
 
+        controlPanel.add(prevButton, gbc);
+        gbc.gridx++;
         controlPanel.add(startButton, gbc);
         gbc.gridx++;
         controlPanel.add(pauseButton, gbc);
@@ -41,6 +51,10 @@ public class VisualizationControlPanel extends JPanel {
         controlPanel.add(stopButton, gbc);
         gbc.gridx++;
         controlPanel.add(resetButton, gbc);
+        gbc.gridx++;
+        controlPanel.add(nextButton, gbc);
+        gbc.gridx++;
+        controlPanel.add(speedSpinner, gbc);
 
         // Add panels to main panel
         add(controlPanel, BorderLayout.NORTH);
