@@ -7,15 +7,20 @@ import java.util.List;
 
 import javax.swing.JPanel;
 
-public class VisualizationPanel extends JPanel {
+public class VisualizationPanel<T extends Comparable<T>> extends JPanel {
 
-    private List<Integer> data;
+    private transient List<T> data;
 
     public VisualizationPanel() {
         setPreferredSize(new Dimension(800, 400));
     }
 
-    public void setData(List<Integer> data) {
+    public void setData(List<T> data) {
+        this.data = data;
+        repaint();
+    }
+
+    public void updateData(List<T> data) {
         this.data = data;
         repaint();
     }
@@ -27,15 +32,29 @@ public class VisualizationPanel extends JPanel {
             int width = getWidth();
             int height = getHeight();
             int barWidth = width / data.size();
-            int maxValue = data.stream().max(Integer::compareTo).orElse(1);
 
-            for (int i = 0; i < data.size(); i++) {
-                int value = data.get(i);
-                int barHeight = (int) ((double) value / maxValue * height);
-                g.setColor(Color.BLUE);
-                g.fillRect(i * barWidth, height - barHeight, barWidth, barHeight);
-                g.setColor(Color.BLACK);
-                g.drawRect(i * barWidth, height - barHeight, barWidth, barHeight);
+            if (data.get(0) instanceof Integer) {
+                Integer maxValue = (Integer) data.stream().max(T::compareTo).orElse(null);
+
+                for (int i = 0; i < data.size(); i++) {
+                    Integer value = (Integer) data.get(i);
+                    int barHeight = (int) ((double) value / maxValue * height);
+                    g.setColor(Color.BLUE);
+                    g.fillRect(i * barWidth, height - barHeight, barWidth, barHeight);
+                    g.setColor(Color.BLACK);
+                    g.drawRect(i * barWidth, height - barHeight, barWidth, barHeight);
+                }
+            } else if (data.get(0) instanceof String) {
+                int maxValue = data.stream().mapToInt(value -> ((String) value).length()).max().orElse(1);
+
+                for (int i = 0; i < data.size(); i++) {
+                    String value = (String) data.get(i);
+                    int barHeight = (int) ((double) value.length() / maxValue * height);
+                    g.setColor(Color.BLUE);
+                    g.fillRect(i * barWidth, height - barHeight, barWidth, barHeight);
+                    g.setColor(Color.BLACK);
+                    g.drawRect(i * barWidth, height - barHeight, barWidth, barHeight);
+                }
             }
         }
     }

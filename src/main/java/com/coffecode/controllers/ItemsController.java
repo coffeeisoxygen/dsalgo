@@ -3,14 +3,18 @@ package com.coffecode.controllers;
 import java.util.List;
 
 import com.coffecode.enums.SortAlgorithmType;
-import com.coffecode.models.IItemsModel;
+import com.coffecode.models.ItemsModel;
 
 public class ItemsController<T extends Comparable<T>> {
 
-    private IItemsModel<T> model;
+    private ItemsModel<T> model;
 
-    public ItemsController(IItemsModel<T> model) {
+    public ItemsController(ItemsModel<T> model) {
         this.model = model;
+    }
+
+    public ItemsModel<T> getModel() {
+        return model;
     }
 
     public void addItem(T item) {

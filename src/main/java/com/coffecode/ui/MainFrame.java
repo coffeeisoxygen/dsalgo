@@ -10,26 +10,23 @@ import javax.swing.JSplitPane;
 
 import com.coffecode.context.AppContext;
 
-public class MainFrame extends JFrame {
+public class MainFrame<T extends Comparable<T>> extends JFrame {
 
-    private DataPreparationPanel<String> dataPreparationPanel;
+    private DataPreparationPanel<T> dataPreparationPanel;
     private AlgorithmSettingsPanel algorithmSettingsPanel;
-    private VisualizationControlPanel visualizationControlPanel;
+    private VisualizationControlPanel<T> visualizationControlPanel;
 
-    public MainFrame(AppContext context) {
+    public MainFrame(AppContext<T> context) {
         super("Sorting App");
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        // Initialize panels with controller from context
-        dataPreparationPanel = new DataPreparationPanel<>(context.getItemsController());
-        algorithmSettingsPanel = new AlgorithmSettingsPanel();
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
         // Initialize panels with controller from context
         dataPreparationPanel = new DataPreparationPanel<>(context.getItemsController());
         algorithmSettingsPanel = new AlgorithmSettingsPanel();
-        visualizationControlPanel = new VisualizationControlPanel();
+        visualizationControlPanel = new VisualizationControlPanel<>(context);
 
         // Set static size for DataPreparationPanel
         dataPreparationPanel.setPreferredSize(new Dimension(200, getHeight()));

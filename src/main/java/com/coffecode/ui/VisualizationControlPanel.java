@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -12,18 +13,34 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.UIManager;
 import javax.swing.border.TitledBorder;
 
-public class VisualizationControlPanel extends JPanel {
+import com.coffecode.context.AppContext;
+import com.coffecode.controllers.ItemsController;
+import com.coffecode.handlers.SortingHandler;
+import com.coffecode.models.DataChangeListener;
+
+public class VisualizationControlPanel<T extends Comparable<T>> extends JPanel {
 
     private JPanel controlPanel;
-    private VisualizationPanel visualizationPanel;
+    private VisualizationPanel<T> visualizationPanel;
+    private transient SortingHandler<T> sortingHandler;
 
-    public VisualizationControlPanel() {
+    public VisualizationControlPanel(AppContext<T> context) {
+        ItemsController<T> controller = context.getItemsController();
         setLayout(new BorderLayout());
         setBorder(new TitledBorder("Visualization and Control"));
 
         // Initialize panels
         controlPanel = new JPanel(new GridBagLayout());
-        visualizationPanel = new VisualizationPanel();
+        visualizationPanel = new VisualizationPanel<>();
+        sortingHandler = new SortingHandler<>(controller);
+
+        // Register data change listener
+        controller.getModel().addDataChangeListener(new DataChangeListener<T>() {
+            @Override
+            public void onDataChanged(List<T> data) {
+                visualizationPanel.updateData(data);
+            }
+        });
 
         // Create control buttons with icons from FlatLaf
         JButton startButton = new JButton(UIManager.getIcon("FileView.fileIcon"));
@@ -59,9 +76,12 @@ public class VisualizationControlPanel extends JPanel {
         // Add panels to main panel
         add(controlPanel, BorderLayout.NORTH);
         add(visualizationPanel, BorderLayout.CENTER);
+
+        // Add action listener to start button
+        startButton.addActionListener(e -> sortingHandler.startSorting());
     }
 
-    public VisualizationPanel getVisualizationPanel() {
+    public VisualizationPanel<T> getVisualizationPanel() {
         return visualizationPanel;
     }
 }

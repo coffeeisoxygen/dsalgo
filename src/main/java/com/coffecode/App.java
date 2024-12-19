@@ -15,8 +15,8 @@ public class App {
         FlatLightLaf.setup();
 
         SwingUtilities.invokeLater(() -> {
-            AppContext context = new AppContext();
-            MainFrame mainFrame = new MainFrame(context);
+            AppContext<Integer> context = new AppContext<>();
+            MainFrame<Integer> mainFrame = new MainFrame<>(context);
             mainFrame.setVisible(true);
         });
     }

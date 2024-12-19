@@ -15,13 +15,20 @@ public class ItemsModel<T extends Comparable<T>> implements IItemsModel<T> {
     private SortStrategy<T> sortStrategy;
     private boolean isSorted;
     private SortAlgorithmType currentSortAlgorithm;
+    private List<DataChangeListener<T>> listeners;
 
     public ItemsModel() {
         this.itemList = new ArrayList<>();
+        this.listeners = new ArrayList<>();
         this.itemSize = 0;
         this.sortStrategy = null;
         this.isSorted = false;
         this.currentSortAlgorithm = null;
+    }
+
+    @SuppressWarnings("unchecked")
+    private T castToT(Object obj) {
+        return (T) obj;
     }
 
     // Method to add items to the list
@@ -31,16 +38,21 @@ public class ItemsModel<T extends Comparable<T>> implements IItemsModel<T> {
             this.itemList.add(item);
             this.itemSize = this.itemList.size();
             this.isSorted = false; // Reset isSorted flag when a new item is added
+            notifyListeners();
         } else {
             throw new IllegalArgumentException("Invalid item: " + item);
         }
+    }
+
+    private boolean validateItem(T item) {
+        return item != null;
     }
 
     // Method to add multiple random strings to the list
     @Override
     public void addRandomStrings(int length, int count) {
         for (int i = 0; i < count; i++) {
-            addItem((T) RandomGenerator.generateRandomString(length));
+            addItem(castToT(RandomGenerator.generateRandomString(length)));
         }
     }
 
@@ -48,7 +60,7 @@ public class ItemsModel<T extends Comparable<T>> implements IItemsModel<T> {
     @Override
     public void addRandomIntegers(int min, int max, int count) {
         for (int i = 0; i < count; i++) {
-            addItem((T) Integer.valueOf(RandomGenerator.generateRandomNumber(min, max)));
+            addItem(castToT(RandomGenerator.generateRandomNumber(min, max)));
         }
     }
 
@@ -66,6 +78,7 @@ public class ItemsModel<T extends Comparable<T>> implements IItemsModel<T> {
         this.itemList.clear();
         this.itemSize = 0;
         this.isSorted = false; // Reset isSorted flag when items are reset
+        notifyListeners();
     }
 
     // Method to set the sorting strategy
@@ -79,8 +92,13 @@ public class ItemsModel<T extends Comparable<T>> implements IItemsModel<T> {
     @Override
     public void sortItems() {
         if (this.sortStrategy != null) {
-            this.sortStrategy.sort(this.itemList);
-            this.isSorted = true; // Set isSorted flag to true after sorting
+            try {
+                this.sortStrategy.sort(this.itemList);
+                this.isSorted = true;
+                notifyListeners();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -102,15 +120,22 @@ public class ItemsModel<T extends Comparable<T>> implements IItemsModel<T> {
         return this.itemSize;
     }
 
-    // Getter for currentSortAlgorithm
     @Override
     public SortAlgorithmType getCurrentSortAlgorithm() {
         return this.currentSortAlgorithm;
     }
 
-    // Validator for items
-    private boolean validateItem(T item) {
-        // Add validation logic here if needed
-        return item != null;
+    public void addDataChangeListener(DataChangeListener<T> listener) {
+        listeners.add(listener);
+    }
+
+    public void removeDataChangeListener(DataChangeListener<T> listener) {
+        listeners.remove(listener);
+    }
+
+    public void notifyListeners() {
+        for (DataChangeListener<T> listener : listeners) {
+            listener.onDataChanged(itemList);
+        }
     }
 }

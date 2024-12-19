@@ -3,10 +3,10 @@ package com.coffecode.context;
 import com.coffecode.controllers.ItemsController;
 import com.coffecode.models.ItemsModel;
 
-public class AppContext {
+public class AppContext<T extends Comparable<T>> {
 
-    private ItemsModel<String> itemsModel;
-    private ItemsController<String> itemsController;
+    private ItemsModel<T> itemsModel;
+    private ItemsController<T> itemsController;
 
     public AppContext() {
         // Initialize model and controller
@@ -14,11 +14,11 @@ public class AppContext {
         itemsController = new ItemsController<>(itemsModel);
     }
 
-    public ItemsModel<String> getItemsModel() {
+    public ItemsModel<T> getItemsModel() {
         return itemsModel;
     }
 
-    public ItemsController<String> getItemsController() {
+    public ItemsController<T> getItemsController() {
         return itemsController;
     }
 }
