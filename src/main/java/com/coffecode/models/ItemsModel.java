@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.coffecode.enums.SortAlgorithmType;
-import com.coffecode.interfaces.SortStrategy;
+import com.coffecode.sorting.SortStrategy;
 import com.coffecode.sorting.factory.SortFactory;
 
-public class ItemsModel {
+public class ItemsModel<T extends Comparable<T>> {
 
-    private List<String> itemList;
+    private List<T> itemList;
     private int itemSize;
-    private SortStrategy sortStrategy;
+    private SortStrategy<T> sortStrategy;
     private boolean isSorted;
 
     public ItemsModel() {
@@ -22,7 +22,7 @@ public class ItemsModel {
     }
 
     // Method to add items to the list
-    public void addItem(String item) {
+    public void addItem(T item) {
         this.itemList.add(item);
         this.itemSize = this.itemList.size();
         this.isSorted = false; // Reset isSorted flag when a new item is added
@@ -54,7 +54,7 @@ public class ItemsModel {
     }
 
     // Getter for itemList
-    public List<String> getItemList() {
+    public List<T> getItemList() {
         return this.itemList;
     }
 

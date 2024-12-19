@@ -1,17 +1,18 @@
 package com.coffecode.sorting.types;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import com.coffecode.interfaces.SortStrategy;
+import com.coffecode.sorting.SortStrategy;
 
-public class MergeSort implements SortStrategy {
+public class MergeSort<T extends Comparable<T>> implements SortStrategy<T> {
 
     @Override
-    public void sort(List<String> items) {
+    public void sort(List<T> items) {
         mergeSort(items, 0, items.size() - 1);
     }
 
-    private void mergeSort(List<String> items, int left, int right) {
+    private void mergeSort(List<T> items, int left, int right) {
         if (left < right) {
             int mid = (left + right) / 2;
             mergeSort(items, left, mid);
@@ -20,42 +21,42 @@ public class MergeSort implements SortStrategy {
         }
     }
 
-    private void merge(List<String> items, int left, int mid, int right) {
+    private void merge(List<T> items, int left, int mid, int right) {
         int n1 = mid - left + 1;
         int n2 = right - mid;
 
-        String[] leftArray = new String[n1];
-        String[] rightArray = new String[n2];
+        List<T> leftArray = new ArrayList<>(n1);
+        List<T> rightArray = new ArrayList<>(n2);
 
         for (int i = 0; i < n1; i++) {
-            leftArray[i] = items.get(left + i);
+            leftArray.add(items.get(left + i));
         }
         for (int j = 0; j < n2; j++) {
-            rightArray[j] = items.get(mid + 1 + j);
+            rightArray.add(items.get(mid + 1 + j));
         }
 
         int i = 0;
         int j = 0;
         int k = left;
         while (i < n1 && j < n2) {
-            if (leftArray[i].compareTo(rightArray[j]) <= 0) {
-                items.set(k, leftArray[i]);
+            if (leftArray.get(i).compareTo(rightArray.get(j)) <= 0) {
+                items.set(k, leftArray.get(i));
                 i++;
             } else {
-                items.set(k, rightArray[j]);
+                items.set(k, rightArray.get(j));
                 j++;
             }
             k++;
         }
 
         while (i < n1) {
-            items.set(k, leftArray[i]);
+            items.set(k, leftArray.get(i));
             i++;
             k++;
         }
 
         while (j < n2) {
-            items.set(k, rightArray[j]);
+            items.set(k, rightArray.get(j));
             j++;
             k++;
         }
