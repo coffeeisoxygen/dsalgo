@@ -21,6 +21,11 @@ public class RandomGenerator {
         return builder.toString();
     }
 
+    public static String generateRandomString(int minLength, int maxLength) {
+        int length = generateRandomNumber(minLength, maxLength);
+        return generateRandomString(length);
+    }
+
     public static int generateRandomNumber(int min, int max) {
         return RANDOM.nextInt((max - min + 1)) + min;
     }

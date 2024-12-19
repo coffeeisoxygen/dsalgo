@@ -8,6 +8,7 @@ import javax.swing.JOptionPane;
 import com.coffecode.controllers.ItemsController;
 import com.coffecode.enums.DataType;
 import com.coffecode.enums.InputType;
+import com.coffecode.helper.RandomGenerator;
 
 public class DataPreparationHandler<T extends Comparable<T>> {
 
@@ -47,7 +48,8 @@ public class DataPreparationHandler<T extends Comparable<T>> {
             }
         } else if (inputType == InputType.AUTOINPUT) {
             if (dataType == DataType.STRING) {
-                controller.addRandomStrings(5, 10); // Example parameters
+                List<String> randomStrings = generateRandomStrings(10, 1, 20); // Generate 10 strings with length between 1 and 20
+                controller.addItemsFromUserInput(castList(randomStrings));
             } else if (dataType == DataType.INTEGER) {
                 controller.addRandomIntegers(1, 100, 10); // Example parameters
             }
@@ -55,7 +57,11 @@ public class DataPreparationHandler<T extends Comparable<T>> {
         }
     }
 
-
+    private List<String> generateRandomStrings(int count, int minLength, int maxLength) {
+        return java.util.stream.IntStream.range(0, count)
+                .mapToObj(i -> RandomGenerator.generateRandomString(minLength, maxLength))
+                .toList();
+    }
 
     private String getInputMessage(DataType dataType) {
         if (dataType == DataType.STRING) {
